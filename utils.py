@@ -10,3 +10,6 @@ def saveCaptcha(path, data):
 def getRandomString(l = 15): 
     alphabet = 'abcdefghijklmnopqrstuvwxyz'
     return ''.join(alphabet[random.randint(0, len(alphabet) - 1)] for i in range(l)) 
+
+def getIpAddress(session):
+    return session.get('http://httpbin.org/ip').json()['origin']

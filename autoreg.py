@@ -3,16 +3,13 @@ from datetime import datetime
 from torSession import TorSession
 from storage import Storage
 from hydra import Hydra
-from utils import getRandomString
-
-def getIpAddress(session):
-    return session.get('http://httpbin.org/ip').json()['origin']
+from utils import getRandomString, getIpAddress
 
 store = Storage('data.csv')
 session = TorSession()
 
 currentIp = getIpAddress(session)
-print('Текущий ip: ', currentIp)
+print('\nТекущий ip: ', currentIp)
 print('Количество записей в файле: ', len(store.data))
 
 
@@ -23,8 +20,6 @@ while not isReg:
     login = getRandomString()
     name = getRandomString()
     password = getRandomString()
-
-    print(login, name, password)
 
     isReg = site.registration(login, name, password)
 

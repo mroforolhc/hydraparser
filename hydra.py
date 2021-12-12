@@ -21,6 +21,14 @@ class Hydra:
         
         return errors
 
+    def logout(self):
+        print('Выходим из аккаунта...')
+        r = self.session.get(self.url)
+        soup = Soup(r.text, 'html.parser')
+
+        logoutLink = soup.select_one('.user_head .dropdown-menu li:last-child a').get('href')
+        self.session.get(self.url + logoutLink)
+
     def getAccess(self) -> None:
         firstConnect = True
 
@@ -67,7 +75,7 @@ class Hydra:
                 time.sleep(1)
                 break
             
-            saveCaptcha('registerCaptcha.jpg', soup.form.img.get('src'))
+            saveCaptcha('registerCaptcha.png', soup.form.img.get('src'))
             captchaData = soup.form.find('input', attrs={'name': 'captchaData'}).get('value')
 
             captcha = input('Введите капчу для регистрации: ')
@@ -120,6 +128,48 @@ class Hydra:
             return False
 
         return True
+
+    def auth(self, login, password):
+        invalidParams = False
+        print('Авторизуемся...')
+        r = self.session.get(self.url + '/login')
+
+        while r.url == self.url + '/login':
+            soup = Soup(r.text, 'html.parser')
+            errors = self.getErrors(soup)
+
+            for error in errors:
+                print(error)
+                if (error != 'Вы ввели неверный код с картинки') and \
+                    (error != 'Капча устарела (срок действия 3 мин)'):
+                    invalidParams = True
+
+            if (invalidParams):
+                time.sleep(1)
+                break
+            
+            saveCaptcha('loginCaptcha.png', soup.form.img.get('src'))
+            captchaData = soup.form.find('input', attrs={'name': 'captchaData'}).get('value')
+
+            captcha = input('Введите капчу для авторизации: ')
+            r = self.session.post(self.url + '/login', data = {
+                'captchaData': captchaData,
+                'captcha': captcha,
+                'login': login,
+                'password': password,
+                '_token': '',
+                'redirect': 1,
+            })
+
+        time.sleep(1)
+    
+        if (invalidParams):
+            return False
+
+        print('Вход выполнен')
+
+        return True
+
 
     def getWallet(self):
         print('Сохраняем кошелёк...')

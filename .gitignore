@@ -4,4 +4,5 @@ __pycache__
 
 data.csv
 startCaptcha.jpg
-registerCaptcha.jpg
+registerCaptcha.png
+loginCaptcha.png
