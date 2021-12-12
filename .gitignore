@@ -1,0 +1,7 @@
+__pycache__
+.venv
+.vscode
+
+data.csv
+startCaptcha.jpg
+registerCaptcha.jpg
